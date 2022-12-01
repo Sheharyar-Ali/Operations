@@ -2,7 +2,7 @@ file = open("Operations_data.csv", "r")
 Transfer_time = []
 Arr = []
 Dep = []
-Span = []
+Type = []
 ArrInt = []
 DepInt = []
 Pax = []
@@ -12,7 +12,7 @@ for lines in file.readlines():
     Transfer_time.append(columns[0].strip())
     Arr.append(columns[1].strip())
     Dep.append(columns[2].strip())
-    Span.append(columns[3].strip())
+    Type.append(columns[3].strip())
     ArrInt.append(columns[4].strip())
     DepInt.append(columns[5].strip())
     Pax.append(int(columns[6].strip()))
@@ -28,12 +28,10 @@ for i in range(0, len(DepInt)):
         DepInt[i] = 0
     elif DepInt[i] == "1":
         DepInt[i] = 1
-for i in range(0,len(DepInt)):
-    if DepInt[i] == 1 or ArrInt[i] ==1:
+for i in range(0, len(DepInt)):
+    if DepInt[i] == 1 or ArrInt[i] == 1:
         DepInt[i] = 1
         ArrInt[i] = 1
-
-
 
 # Calculating time spent on ground in minutes
 for i in range(0, len(Transfer_time)):
@@ -52,4 +50,18 @@ for i in range(0, len(Dep)):
         Dep[i] = "OO:OO"
         Transfer_time[i] = 0
 
-
+## Changing aircraft types to numbers
+for i in range(0, len(Type)):
+    Value = Type[i]
+    if Value == "A":
+        Type[i] = 1
+    elif Value == "B":
+        Type[i] = 2
+    elif Value == "C":
+        Type[i] = 3
+    elif Value == "D":
+        Type[i] = 4
+    elif Value == "E":
+        Type[i] = 5
+    elif Value == "F":
+        Type[i] = 6
