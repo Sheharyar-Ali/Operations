@@ -51,17 +51,19 @@ for i in range(0, len(Dep)):
         Transfer_time[i] = 0
 
 ## Changing aircraft types to numbers
-for i in range(0, len(Type)):
-    Value = Type[i]
-    if Value == "A":
-        Type[i] = 1
-    elif Value == "B":
-        Type[i] = 2
-    elif Value == "C":
-        Type[i] = 3
-    elif Value == "D":
-        Type[i] = 4
-    elif Value == "E":
-        Type[i] = 5
-    elif Value == "F":
-        Type[i] = 6
+ac_types={
+    "A":"1",
+    "B":"2",
+    "C":"3",
+    "D":"4",
+    "E":"5",
+    "F":"6",
+    "M":"7"
+}
+for i in range(0,len(Type)):
+    for word,replacement in ac_types.items():
+        Type[i] = Type[i].replace(word,replacement)
+    Type[i]= int(Type[i])
+
+
+
