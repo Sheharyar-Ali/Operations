@@ -3,11 +3,12 @@ import numpy as np
 
 
 class x:
-    def __init__(self, i, j, k):
+    def __init__(self, i, j, k, n, t):
         self.i = i  # international or not
         self.j = j  # Type of aircraft
         self.k = k  # Assigned to gate
-
+        self.n = n  #number of passengers
+        self.t = t  # transfer time
 
 class g:
     def __init__(self, i, j, k, l):
@@ -22,7 +23,9 @@ Fd = []  # collection of single flights
 
 ### Filling F and Fd with the x class
 for i in range(0, len(Type)):
-    Class = x(ArrInt[i], Type[i], 0)
+    Class = x(ArrInt[i], Type[i], 0,0,0)
+    Class.n = Pax[i]
+    Class.t = Transfer_time[i]
     if Transfer_time[i] != 0:
         F.append(Class)
     else:
@@ -59,4 +62,3 @@ for lines in file.readlines():
         gate.k = 1
     for i in range(0, number):
         Gates.append(gate)
-print(len(Gates))
