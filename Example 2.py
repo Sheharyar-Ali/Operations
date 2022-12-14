@@ -4,6 +4,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import gurobipy as gp
 from gurobipy import GRB
+ #from Classes import F, Fd, Gates, compatible_gates
 
 ## Model F - Explicit Desires (want a certain terminal) #######
 
@@ -13,23 +14,21 @@ from gurobipy import GRB
 # # 1. Objective Function (ignore for now)
 # prob += 0
 
-#Gu#
-opt_model = gp.Model(name = "MIP Model")
+# Gu#
+opt_model = gp.Model(name="MIP Model")
 objective = 0
-objective +=0
+objective += 0
 opt_model.ModelSense = gp.GRB.MINIMIZE
 opt_model.setObjective(objective)
-
-
 
 ###Extra code to avoid compilation error while testing
 ########################################################################################################################
 
 turns = pd.DataFrame({
-    'turn_no': [1, 2, 3, 4, 5],
-    'from_country': ['GB', 'GB', 'US', 'TR', 'RU'],
-    'to_country': ['CZ', 'CZ', 'CZ', 'FR', 'FR'],
-    'plane_size': [2, 3, 2, 1, 1]
+    'turn_no': [1, 2, 3, 4, 5],  # aircraft number
+    'from_country': ['GB', 'GB', 'US', 'TR', 'RU'],  # arrival country
+    'to_country': ['CZ', 'CZ', 'CZ', 'FR', 'FR'],  # departure country
+    'plane_size': [2, 3, 2, 1, 1]  # size delegation
 }, columns=['turn_no', 'plane_size', 'from_country', 'to_country'])
 
 airport = pd.DataFrame({
@@ -37,7 +36,6 @@ airport = pd.DataFrame({
     'gate': ['A1', 'A2', 'A3', 'B1', 'C1', 'C2'],
     'max_size': [3, 1, 2, 3, 1, 1]
 }, columns=['terminal', 'gate', 'max_size'])
-
 
 turns = pd.DataFrame({
     'turn_no': [1, 2, 3, 4, 5],
@@ -63,39 +61,39 @@ print("Available gates: ", gate_list)
 
 # Let's add some more flights
 extra_flights = pd.DataFrame({
-    'turn_no':[6,7,8,9,10],
-    'from_country':['FR','CZ','US','FR','RU'],
-    'to_country':['GB','GB','GB','FR','RU'],
-    'plane_size':[1,3,1,1,1]
-    }, columns=['turn_no', 'plane_size', 'from_country', 'to_country'])
+    'turn_no': [6, 7, 8, 9, 10],
+    'from_country': ['FR', 'CZ', 'US', 'FR', 'RU'],
+    'to_country': ['GB', 'GB', 'GB', 'FR', 'RU'],
+    'plane_size': [1, 3, 1, 1, 1]
+}, columns=['turn_no', 'plane_size', 'from_country', 'to_country'])
 
 # turns2 = turns.append(extra_flights, ignore_index = True) #depreciated
-turns2 = pd.concat([turns,extra_flights])
+turns2 = pd.concat([turns, extra_flights])
 
 # Add some flight-times
 turns2['inbound_arrival'] = pd.to_datetime([
-        "02/01/2016 06:05",
-        "02/01/2016 06:05",
-        "02/01/2016 09:10",
-        "02/01/2016 09:10",
-        "02/01/2016 09:10",
-        "02/01/2016 12:15",
-        "02/01/2016 12:15",
-        "02/01/2016 15:20",
-        "02/01/2016 16:20",
-        "02/01/2016 16:30"])
+    "02/01/2016 06:05",
+    "02/01/2016 06:05",
+    "02/01/2016 09:10",
+    "02/01/2016 09:10",
+    "02/01/2016 09:10",
+    "02/01/2016 12:15",
+    "02/01/2016 12:15",
+    "02/01/2016 15:20",
+    "02/01/2016 16:20",
+    "02/01/2016 16:30"])
 
 turns2['outbound_departure'] = pd.to_datetime([
-        "02/01/2016 07:05",
-        "02/01/2016 09:05",
-        "02/01/2016 15:10",
-        "02/01/2016 13:10",
-        "02/01/2016 17:10",
-        "02/01/2016 15:15",
-        "02/01/2016 15:15",
-        "02/01/2016 21:20",
-        "02/01/2016 21:20",
-        "02/01/2016 17:30"])
+    "02/01/2016 07:05",
+    "02/01/2016 09:05",
+    "02/01/2016 15:10",
+    "02/01/2016 13:10",
+    "02/01/2016 17:10",
+    "02/01/2016 15:15",
+    "02/01/2016 15:15",
+    "02/01/2016 21:20",
+    "02/01/2016 21:20",
+    "02/01/2016 17:30"])
 
 print("------------here now-------")
 print(turns2)
@@ -105,8 +103,8 @@ turn_list = turns2.turn_no.values
 print("New turns to allocate: ", turn_list)
 
 
-compatible_gates = {}
-for idx, row in turns.iterrows():
+compatible_gates = {}  # replace with compatible gates list
+for idx, row in turns2.iterrows():
     gates_lst = airport[airport.max_size >= row.plane_size].gate.values
     compatible_gates[row.turn_no] = gates_lst
 
@@ -115,10 +113,10 @@ for k, v in compatible_gates.items():
     print(k, v)
 
 occupancy = pd.DataFrame({
-    'gate':['A3', 'A2'],
-    'occupied_from':pd.to_datetime(["02/01/2016 15:15", "02/01/2016 13:15"]),
-    'occupied_to':pd.to_datetime(["02/01/2016 19:15", "02/01/2016 14:15"]),
-    }, columns=['gate', 'occupied_from', 'occupied_to'])
+    'gate': ['A3', 'A2'],
+    'occupied_from': pd.to_datetime(["02/01/2016 15:15", "02/01/2016 13:15"]),
+    'occupied_to': pd.to_datetime(["02/01/2016 19:15", "02/01/2016 14:15"]),
+}, columns=['gate', 'occupied_from', 'occupied_to'])
 
 ###############################################################################################33
 
@@ -130,24 +128,25 @@ x = {}
 ## IMPORTANT: Didnot make the following list in the previous example
 # as it was not necessary.
 # But here we might need it to cal
-constraints_list = {} # initializing a list for constraints
+constraints_list = {}  # initializing a list for constraints
 
 for t in turn_list:
     # For compatible gates
-    for g in compatible_gates[t]:
-        if g in occupancy.gate.get_values():
-
-            t_dep = turns2.loc[turns2['turn_no'] == t, 'outbound_departure'].values[0]
-            t_arr = turns2.loc[turns2['turn_no'] == t, 'inbound_arrival'].values[0]
-            oc_from = occupancy.loc[occupancy['gate'] == g, 'occupied_from'].values[0]
-            oc_to = occupancy.loc[occupancy['gate'] == g, 'occupied_to'].values[0]
+    for g in compatible_gates[t]:  # for every compatible gate for plane t
+        if g in occupancy['gate'].values:  # if gate is in occupancy list
+            t_dep = turns2.loc[turns2['turn_no'] == t, 'outbound_departure'].values[
+                0]  # get the departure time for flight t
+            t_arr = turns2.loc[turns2['turn_no'] == t, 'inbound_arrival'].values[0]  # get the arrival time for flight t
+            oc_from = occupancy.loc[occupancy['gate'] == g, 'occupied_from'].values[
+                0]  # get when gate g is occupied from
+            oc_to = occupancy.loc[occupancy['gate'] == g, 'occupied_to'].values[0]  # get when gate g is occupied to
 
             if (oc_to >= t_arr) and (oc_from <= t_dep):
                 continue
 
         # Gate not occupied so create variable
         # x[t, g] = LpVariable("t%i_g%s" % (t, g), 0, 1, LpBinary)
-        x[t,g] = opt_model.addVar(Vtype=gp.GRB.BINARY, name = "t%i_g%s".format(t, g))
+        # x[t,g] = opt_model.addVar(Vtype=gp.GRB.BINARY, name = "t%i_g%s".format(t, g))
 
 # 3. Constraints
 # i. Each turn must be assigned to one compatible gate
@@ -171,7 +170,6 @@ for idx, row in heatmapdf.iterrows():
 
         # prob += constraint_for_time_bucket
         constraint_for_time_bucket += constraint_for_time_bucket
-
 
 # Imagine we really like the E terminal and would prefer to use those gates
 # Add all turns under those gates with a negative cost coefficient
@@ -214,7 +212,7 @@ for t in turn_list:
     # For compatible gates
     for g in compatible_gates[t]:
         if g in occupancy.gate.values:
-        # if g in occupancy.gate.get_values():
+            # if g in occupancy.gate.get_values():
 
             t_dep = turns2.loc[turns2['turn_no'] == t, 'outbound_departure'].values[0]
             t_arr = turns2.loc[turns2['turn_no'] == t, 'inbound_arrival'].values[0]
@@ -227,7 +225,6 @@ for t in turn_list:
         # Gate not occupied so create variable
         # x[t, g] = LpVariable("t%i_g%s" % (t, g), 0, 1, LpBinary)
         x[t, g] = opt_model.addVar(Vtype=gp.GRB.BINARY, name="t%i_g%s".format(t, g))
-
 
 # 3. Constraints
 # i. Each turn must be assigned to one compatible gate
@@ -264,10 +261,10 @@ for g in gate_list:
     for t in turn_list:
         if (t, g) in x:
             # prob += gate_used_max[g] >= x[t, g]
-            constraints_list+= gate_used_max[g] >= x[t,g]
+            constraints_list += gate_used_max[g] >= x[t, g]
     # Set upper-bound
     # prob += gate_used_max[g] <= lpSum(x[t, g] for t in turn_list if (t, g) in x)
-    constraints_list+= gate_used_max[g] <= opt_model.addConstr(gp.quicksum(x[t, g] for t in turn_list if (t, g) in x))
+    constraints_list += gate_used_max[g] <= opt_model.addConstr(gp.quicksum(x[t, g] for t in turn_list if (t, g) in x))
 
 # Add with positive coefficient to objective
 pos_cost_coeff = 5
@@ -277,7 +274,7 @@ max_gates = opt_model.addConstr(gp.quicksum(pos_cost_coeff * gate_used_max[g] fo
 print(max_gates)
 
 # prob += max_gates
-constraints_list+= max_gates
+constraints_list += max_gates
 
 # Solve
 # prob.solve()
@@ -287,12 +284,11 @@ constraints_list+= max_gates
 # print("Minimised Cost: ", value(prob.objective))
 
 for alloc in x:
-    if x[alloc].varValue: #replace .varValue by X if the code gives error here
+    if x[alloc].varValue:  # replace .varValue by X if the code gives error here
         print("Turn %i assigned to gate %s" % (alloc[0], alloc[-1]))
 
 # This example uses just 5 gates (E5, A1, E9, E3, E10)
 # plot_gantt_chart(turns2, x)
-
 
 
 ## Model H - Maximise number of gates (Max Function) ##

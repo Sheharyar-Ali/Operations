@@ -3,15 +3,18 @@ import numpy as np
 
 
 class x:
-    def __init__(self, i, j, k, n, t):
+    def __init__(self, i, j, k, n, t, iden):
+        self.ident = iden
         self.i = i  # international or not
         self.j = j  # Type of aircraft
         self.k = k  # Assigned to gate
-        self.n = n  #number of passengers
+        self.n = n  # number of passengers
         self.t = t  # transfer time
 
+
 class g:
-    def __init__(self, i, j, k, l):
+    def __init__(self, i, j, k, l, iden):
+        self.ident = iden
         self.i = i  # Type of aircraft it can support
         self.j = j  # Type (I,N,R,S)
         self.k = k  # Does it have a bridge ( 1= yes , 0 = no)
@@ -23,7 +26,7 @@ Fd = []  # collection of single flights
 
 ### Filling F and Fd with the x class
 for i in range(0, len(Type)):
-    Class = x(ArrInt[i], Type[i], 0,0,0)
+    Class = x(i=ArrInt[i], j=Type[i], k=0, n=0, t=0, iden=i)
     Class.n = Pax[i]
     Class.t = Transfer_time[i]
     if Transfer_time[i] != 0:
@@ -46,7 +49,7 @@ file = open("Gate_data.csv", "r")
 for lines in file.readlines():
     lines = lines[:-1]
     columns = lines.split(",")
-    gate = g(1, 1, 1, 1)
+    gate = g(i=1, j=1, k=1, l=1, iden=0)
     number = int(columns[1].strip())
     aircraft_type = columns[0][0].strip()
     for words, replacement in ac_types.items():
@@ -62,3 +65,17 @@ for lines in file.readlines():
         gate.k = 1
     for i in range(0, number):
         Gates.append(gate)
+for i in range(0, len(Gates)):
+    Gates[i].ident = i
+
+##### Making compatible gates dataset ###############
+
+compatible_gates = []
+for i in range(0, len(F)):
+    buffer = []
+    type_aircraft = F[i].j
+    for a in range(0, len(Gates)):
+        gate_type = Gates[a].i
+        if type_aircraft <= gate_type:
+            buffer.append(Gates[a])
+    compatible_gates.append(buffer)
