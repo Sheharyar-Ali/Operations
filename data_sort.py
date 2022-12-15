@@ -15,8 +15,8 @@ for lines in file.readlines():
     lines = lines[:-1]
     columns = lines.split(",")
     Transfer_time.append(columns[0].strip())
-    Arr.append(columns[1].strip())
-    Dep.append(columns[2].strip())
+    Arr.append("02/01/2016 "+columns[1].strip())
+    Dep.append("02/01/2016 "+columns[2].strip())
     Type.append(columns[3].strip())
     ArrInt.append(columns[4].strip())
     DepInt.append(columns[5].strip())
@@ -72,15 +72,15 @@ for i in range(0,len(Type)):
     Type[i]= int(Type[i])
 
 #Adding to pandas
-aircraft_data = pd.DataFrame({}, columns=['Name','Arr', 'Dep','transfer_time','Type','Int?','Pax'])
-aircraft_data['Name'] =Name
-aircraft_data["Arr"] = Arr
-aircraft_data['Dep'] = Dep
+aircraft_data = pd.DataFrame({}, columns=['aircraft_no','inbound_arrival', 'outbound_departure','transfer_time','plane_size','Int?','Pax'])
+aircraft_data['aircraft_no'] =Name
+aircraft_data["inbound_arrival"] = Arr
+aircraft_data['outbound_departure'] = Dep
 aircraft_data["transfer_time"] = Transfer_time
-aircraft_data["Type"] = Type
+aircraft_data["plane_size"] = Type
 aircraft_data["Int?"] = ArrInt
 aircraft_data["Pax"] = Pax
-
+print(aircraft_data)
 #### Reading gate data ##########
 
 AC_supported =[]
@@ -120,8 +120,8 @@ for lines in file.readlines():
         Gate_type.append(int(gate_type))
         Bridge.append(bridge_check)
 
-Gates = pd.DataFrame({}, columns=['name', 'ac_supported', 'type', 'bridge?'])
-Gates["name"] = name
+Gates = pd.DataFrame({}, columns=['gate', 'max_size', 'type', 'bridge?'])
+Gates["gate"] = name
 Gates['ac_supported'] = AC_supported
 Gates['type'] = Gate_type
 Gates["bridge?"] = Bridge
@@ -130,7 +130,7 @@ Gates["bridge?"] = Bridge
 ## Compatible gates ##
 compatible_gates = {}
 for idx,rows in aircraft_data.iterrows():
-    gates_list = Gates[Gates.ac_supported <= rows.Type].name.values
-    compatible_gates[rows.Name] = gates_list
+    gates_list = Gates[Gates.ac_supported <= rows.plane_size].name.values
+    compatible_gates[rows.aircraft_no] = gates_list
 
 
